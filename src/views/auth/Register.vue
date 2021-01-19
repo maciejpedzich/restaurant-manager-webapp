@@ -57,8 +57,8 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue';
+import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import axios, { AxiosError } from 'axios';
 
 import { useToast } from 'primevue/usetoast';
 import InputText from 'primevue/inputtext';
@@ -66,7 +66,7 @@ import Password from 'primevue/password';
 import RadioButton from 'primevue/radiobutton';
 import Button from 'primevue/button';
 
-import User from '../../models/user';
+import User from '../../interfaces/user';
 
 export default defineComponent({
   name: 'Register',
@@ -77,6 +77,7 @@ export default defineComponent({
     Button
   },
   setup() {
+    const store = useStore();
     const router = useRouter();
     const toast = useToast();
 
@@ -90,19 +91,22 @@ export default defineComponent({
 
     async function register() {
       try {
-        await axios.post(`/api/auth/register`, user);
+        await store.dispatch('register', user);
+
         router.push('/');
         toast.add({
           severity: 'success',
           life: 3000,
-          summary: 'Success',
-          detail: "You've been registered successfully!"
+          summary: 'Hooray!',
+          detail: "You've been registered successfully"
         });
       } catch (error) {
-        const res = (error as AxiosError).response;
-        const detail = res ? res.data.message : 'An unexpected error occurred';
-
-        toast.add({ severity: 'error', life: 3000, summary: 'Error', detail });
+        toast.add({
+          severity: 'error',
+          life: 3000,
+          summary: 'Error',
+          detail: error.message
+        });
       }
     }
 
