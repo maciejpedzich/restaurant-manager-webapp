@@ -1,5 +1,5 @@
 <template>
-  <Menubar :model="menuItems"></Menubar>
+  <Menubar :model="menuItems" />
   <Toast position="top-right" />
   <div class="container">
     <router-view />
@@ -7,7 +7,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  onUnmounted,
+  reactive
+} from 'vue';
+import { useStore } from 'vuex';
+
 import Menubar from 'primevue/menubar';
 import Toast from 'primevue/toast';
 
@@ -18,6 +26,22 @@ export default defineComponent({
     Toast
   },
   setup() {
+    const store = useStore();
+    const nextRefreshTimestamp = computed<number | null>(
+      () => store.getters.nextRefreshTimestamp
+    );
+
+    onMounted(() => {
+      if (nextRefreshTimestamp) {
+        const timeout =
+          ((nextRefreshTimestamp as unknown) as number) - new Date().getTime();
+
+        store.dispatch('silentRefresh', { timeout });
+      }
+    });
+
+    onUnmounted(() => store.commit('clearRefreshTimeout'));
+
     const menuItems = reactive([
       {
         label: 'Home',
@@ -26,8 +50,8 @@ export default defineComponent({
       },
       {
         label: 'Log in',
-        icon: 'pi pi-sign-in'
-        // to: '/login'
+        icon: 'pi pi-sign-in',
+        to: '/login'
       },
       {
         label: 'Register',

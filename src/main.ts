@@ -9,6 +9,7 @@ import 'primevue/resources/themes/saga-green/theme.css';
 import 'primeicons/primeicons.css';
 
 import App from './App.vue';
+import store from './store';
 import router from './router';
 
 axios.defaults.baseURL = process.env.VUE_APP_API_URL;
@@ -17,7 +18,8 @@ axios.defaults.withCredentials = true;
 const app = createApp(App);
 
 app
+  .use(store)
+  .use(router)
   .use(PrimeVue)
   .use(ToastService)
-  .use(router)
   .mount('#app');
