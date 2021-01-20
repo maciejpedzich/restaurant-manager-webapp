@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { computed, defineComponent, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
@@ -27,7 +27,7 @@ import Button from 'primevue/button';
 import User from '../../interfaces/user';
 
 export default defineComponent({
-  name: 'Register',
+  name: 'LogIn',
   components: {
     InputText,
     Password,
@@ -48,13 +48,15 @@ export default defineComponent({
       try {
         await store.dispatch('logIn', user);
 
-        router.push('/');
+        const currentUser = computed<User>(() => store.getters.user).value;
+
         toast.add({
           severity: 'success',
           life: 3000,
           summary: 'Success',
-          detail: 'Welcome back!'
+          detail: `Welcome back, ${currentUser.firstname}!`
         });
+        router.push('/');
       } catch (error) {
         toast.add({
           severity: 'error',

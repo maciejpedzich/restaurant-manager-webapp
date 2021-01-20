@@ -1,5 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+
 import Home from '../views/Home.vue';
+import AuthModuleState from '@/interfaces/auth-module-state';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -31,6 +33,19 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  const state: AuthModuleState = JSON.parse(
+    localStorage.getItem('vuex') as string
+  ).auth;
+  const isAuthenticated = !!state.accessToken && !!state.currentUser;
+
+  if (!['LogIn', 'Register'].includes(to.name as string) && !isAuthenticated) {
+    return next({ name: 'LogIn' });
+  } else {
+    return next();
+  }
 });
 
 export default router;

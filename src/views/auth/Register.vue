@@ -93,13 +93,13 @@ export default defineComponent({
       try {
         await store.dispatch('register', user);
 
-        router.push('/');
         toast.add({
           severity: 'success',
           life: 3000,
           summary: 'Hooray!',
           detail: "You've been registered successfully"
         });
+        router.push('/');
       } catch (error) {
         toast.add({
           severity: 'error',

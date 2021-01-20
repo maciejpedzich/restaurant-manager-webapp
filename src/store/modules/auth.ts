@@ -17,85 +17,104 @@ const state: AuthModuleState = {
 const getters = {
   accessToken: (state: AuthModuleState) => state.accessToken,
   user: (state: AuthModuleState) => state.currentUser,
-  nextRefreshTimestamp: (state: AuthModuleState) => state.nextRefreshTimestamp
+  isAuthenticated: (state: AuthModuleState) =>
+    !!state.accessToken && !!state.currentUser,
+  nextRefreshTimestamp: (state: AuthModuleState) => state.nextRefreshTimestamp,
+  silentRefreshTimeout: (state: AuthModuleState) => state.silentRefreshTimeout
 };
 
 const actions = {
-  register({ commit }: ActionContext<AuthModuleState, {}>, user: User) {
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        const res = await axios.post('/api/auth/register', user);
-        const accessToken = res.headers.authorization;
-        const currentUser = res.data;
+  async register(
+    { commit, dispatch }: ActionContext<AuthModuleState, {}>,
+    user: User
+  ) {
+    try {
+      const res = await axios.post('/api/auth/register', user);
+      const accessToken = res.headers.authorization;
+      const currentUser = res.data;
 
-        commit('saveCredentials', { accessToken, currentUser });
-        resolve();
-      } catch (error) {
-        const res = (error as AxiosError).response;
-        const message = res
-          ? res.data.message
-          : 'An unexpected application error occurred';
+      commit('saveCredentials', { accessToken, currentUser });
+      await dispatch('silentRefresh', { timeout: FIFTEEN_MINUTES });
+    } catch (error) {
+      const errRes = (error as AxiosError).response;
+      const message = errRes
+        ? errRes.data.message
+        : 'An unexpected application error occurred';
 
-        reject(new Error(message));
-      }
-    });
+      throw new Error(message);
+    }
   },
-  logIn({ commit }: ActionContext<AuthModuleState, {}>, user: User) {
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        const res = await axios.post('/api/auth/login', user);
-        const accessToken = res.headers.authorization;
-        const currentUser = res.data;
+  async logIn(
+    { commit, dispatch }: ActionContext<AuthModuleState, {}>,
+    user: User
+  ) {
+    try {
+      const res = await axios.post('/api/auth/login', user);
+      const accessToken = res.headers.authorization;
+      const currentUser = res.data;
 
-        commit('saveCredentials', { accessToken, currentUser });
-        resolve();
-      } catch (error) {
-        const res = (error as AxiosError).response;
-        const message = res
-          ? res.data.message
-          : 'An unexpected application error occurred';
+      commit('saveCredentials', { accessToken, currentUser });
+      await dispatch('silentRefresh', { timeout: FIFTEEN_MINUTES });
+    } catch (error) {
+      const errRes = (error as AxiosError).response;
+      const message = errRes
+        ? errRes.data.message
+        : 'An unexpected application error occurred';
 
-        reject(new Error(message));
-      }
-    });
+      throw new Error(message);
+    }
   },
   silentRefresh(
-    { state, dispatch, commit }: ActionContext<AuthModuleState, {}>,
-    payload: { timeout: number }
+    { commit, dispatch }: ActionContext<AuthModuleState, {}>,
+    { timeout }: { timeout: number }
   ) {
-    state.silentRefreshTimeout = setTimeout(async () => {
-      try {
-        const res = await axios.post(
-          '/api/auth/refresh',
-          {},
-          { headers: { Authorization: `Bearer ${state.accessToken}` } }
-        );
-        const accessToken = res.headers.authorization;
-        const currentUser = res.data;
-        state.nextRefreshTimestamp = new Date().getTime() + FIFTEEN_MINUTES;
+    return new Promise<number>((resolve, reject) => {
+      const silentRefreshTimeout = setTimeout(() => {
+        axios
+          .post(
+            '/api/auth/refresh',
+            {},
+            { headers: { Authorization: `Bearer ${state.accessToken}` } }
+          )
+          .then((res) => {
+            const accessToken = res.headers.authorization;
+            const currentUser = res.data;
 
-        commit('saveCredentials', { accessToken, currentUser });
-        Promise.resolve(
-          dispatch('silentRefresh', { timeout: FIFTEEN_MINUTES })
-        );
-      } catch (error) {
-        const res = (error as AxiosError).response;
-        const message = res
-          ? res.data.message
-          : 'An unexpected application error occurred';
+            commit('saveCredentials', { accessToken, currentUser });
+            dispatch('silentRefresh', { timeout: FIFTEEN_MINUTES });
+          })
+          .catch((error) => {
+            const res = (error as AxiosError).response;
+            const message = res
+              ? res.data.message
+              : 'An unexpected application error occurred';
 
-        Promise.reject(new Error(message));
-      }
-    }, payload.timeout);
+            reject(new Error(message));
+          });
+      }, timeout);
+
+      commit('setRefreshTimeout', silentRefreshTimeout);
+      resolve(silentRefreshTimeout);
+    });
   }
 };
 
 const mutations = {
-  saveCredentials(state: AuthModuleState, payload: SaveCredentialsPayload) {
-    state.accessToken = payload.accessToken;
-    state.currentUser = payload.currentUser;
+  saveCredentials(
+    state: AuthModuleState,
+    { accessToken, currentUser }: SaveCredentialsPayload
+  ) {
+    state.accessToken = accessToken;
+    state.currentUser = currentUser;
+    state.nextRefreshTimestamp = new Date().getTime() + FIFTEEN_MINUTES;
   },
-  clearRefreshTimeout(state: AuthModuleState) {
+  setRefreshTimeout(state: AuthModuleState, id: number | null) {
+    state.silentRefreshTimeout = id;
+  },
+  logOut(state: AuthModuleState) {
+    state.accessToken = null;
+    state.currentUser = null;
+    state.nextRefreshTimestamp = null;
     state.silentRefreshTimeout = null;
   }
 };

@@ -12,9 +12,12 @@ import {
   defineComponent,
   onMounted,
   onUnmounted,
-  reactive
+  reactive,
+  ref,
+  watch
 } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 import Menubar from 'primevue/menubar';
 import Toast from 'primevue/toast';
@@ -27,36 +30,63 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const nextRefreshTimestamp = computed<number | null>(
-      () => store.getters.nextRefreshTimestamp
+    const router = useRouter();
+
+    const refreshTimeoutId = computed<number | null>(
+      () => store.getters.silentRefreshTimeout
     );
+    const isAuthenticatedGetter = computed<boolean>(
+      () => store.getters.isAuthenticated
+    );
+    let isLoggedIn = ref(isAuthenticatedGetter.value);
 
     onMounted(() => {
-      if (nextRefreshTimestamp) {
-        const timeout =
-          ((nextRefreshTimestamp as unknown) as number) - new Date().getTime();
+      const nextRefreshTimestamp = computed<number | null>(
+        () => store.getters.nextRefreshTimestamp
+      ).value;
 
+      if (nextRefreshTimestamp) {
+        const timeout = nextRefreshTimestamp - new Date().getTime();
         store.dispatch('silentRefresh', { timeout });
       }
     });
 
-    onUnmounted(() => store.commit('clearRefreshTimeout'));
+    onUnmounted(() => store.commit('setRefreshTimeout', null));
+
+    watch(isAuthenticatedGetter, (newValue, oldValue) => {
+      isLoggedIn.value = newValue;
+    });
+
+    function logOut() {
+      clearTimeout(refreshTimeoutId.value as number);
+      store.commit('logOut');
+      router.push('/login');
+    }
 
     const menuItems = reactive([
       {
         label: 'Home',
         icon: 'pi pi-home',
         to: '/'
+        // visible: isLoggedIn.value
+      },
+      {
+        label: 'Log out',
+        icon: 'pi pi-sign-out',
+        command: logOut
+        // visible: isLoggedIn.value
       },
       {
         label: 'Log in',
         icon: 'pi pi-sign-in',
         to: '/login'
+        // visible: !isLoggedIn.value
       },
       {
         label: 'Register',
         icon: 'pi pi-user-plus',
         to: '/register'
+        // visible: !isLoggedIn.value
       }
     ]);
 
