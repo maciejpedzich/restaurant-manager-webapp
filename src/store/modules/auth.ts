@@ -65,7 +65,7 @@ const actions = {
     }
   },
   silentRefresh(
-    { commit, dispatch }: ActionContext<AuthModuleState, {}>,
+    { state, commit, dispatch }: ActionContext<AuthModuleState, {}>,
     { timeout }: { timeout: number }
   ) {
     return new Promise<number>((resolve, reject) => {
