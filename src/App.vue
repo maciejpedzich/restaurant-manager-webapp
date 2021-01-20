@@ -40,6 +40,33 @@ export default defineComponent({
     );
     let isLoggedIn = ref(isAuthenticatedGetter.value);
 
+    const menuItems = reactive([
+      {
+        label: 'Home',
+        icon: 'pi pi-home',
+        to: '/',
+        visible: isLoggedIn.value
+      },
+      {
+        label: 'Log out',
+        icon: 'pi pi-sign-out',
+        command: logOut,
+        visible: isLoggedIn.value
+      },
+      {
+        label: 'Log in',
+        icon: 'pi pi-sign-in',
+        to: '/login',
+        visible: !isLoggedIn.value
+      },
+      {
+        label: 'Register',
+        icon: 'pi pi-user-plus',
+        to: '/register',
+        visible: !isLoggedIn.value
+      }
+    ]);
+
     onMounted(() => {
       const nextRefreshTimestamp = computed<number | null>(
         () => store.getters.nextRefreshTimestamp
@@ -53,8 +80,12 @@ export default defineComponent({
 
     onUnmounted(() => store.commit('setRefreshTimeout', null));
 
-    watch(isAuthenticatedGetter, (newValue, oldValue) => {
+    watch(isAuthenticatedGetter, (newValue) => {
       isLoggedIn.value = newValue;
+      menuItems.map((item) => {
+        item.visible = !item.visible;
+        return item;
+      });
     });
 
     function logOut() {
@@ -62,33 +93,6 @@ export default defineComponent({
       store.commit('logOut');
       router.push('/login');
     }
-
-    const menuItems = reactive([
-      {
-        label: 'Home',
-        icon: 'pi pi-home',
-        to: '/'
-        // visible: isLoggedIn.value
-      },
-      {
-        label: 'Log out',
-        icon: 'pi pi-sign-out',
-        command: logOut
-        // visible: isLoggedIn.value
-      },
-      {
-        label: 'Log in',
-        icon: 'pi pi-sign-in',
-        to: '/login'
-        // visible: !isLoggedIn.value
-      },
-      {
-        label: 'Register',
-        icon: 'pi pi-user-plus',
-        to: '/register'
-        // visible: !isLoggedIn.value
-      }
-    ]);
 
     return { menuItems };
   }
