@@ -25,6 +25,7 @@ import RadioButton from 'primevue/radiobutton';
 import Button from 'primevue/button';
 
 import User from '../../interfaces/user';
+import determineErrorMessage from '@/utils/error-message';
 
 export default defineComponent({
   name: 'LogIn',
@@ -47,22 +48,23 @@ export default defineComponent({
     async function logIn() {
       try {
         await store.dispatch('logIn', user);
-
-        const currentUser = computed<User>(() => store.getters.user).value;
+        const currentUser = computed<User>(() => store.getters.currentUser);
 
         toast.add({
           severity: 'success',
           life: 3000,
           summary: 'Success',
-          detail: `Welcome back, ${currentUser.firstname}!`
+          detail: `Welcome back, ${currentUser.value.firstname}!`
         });
         router.push('/');
       } catch (error) {
+        const message = determineErrorMessage(error);
+
         toast.add({
           severity: 'error',
           life: 3000,
           summary: 'Error',
-          detail: error.message
+          detail: message
         });
       }
     }
