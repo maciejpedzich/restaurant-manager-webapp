@@ -1,5 +1,4 @@
 import { createApp } from 'vue';
-import axios from 'axios';
 
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
@@ -11,11 +10,11 @@ import 'primeicons/primeicons.css';
 import App from './App.vue';
 import store from './store';
 import router from './router';
-
-axios.defaults.baseURL = process.env.VUE_APP_API_URL;
-axios.defaults.withCredentials = true;
+import initAxios from './utils/init-axios';
 
 const app = createApp(App);
+
+initAxios();
 
 app
   .use(store)
