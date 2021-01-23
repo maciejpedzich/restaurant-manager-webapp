@@ -13,7 +13,6 @@ import {
   onMounted,
   onUnmounted,
   reactive,
-  ref,
   watch
 } from 'vue';
 import { useStore } from 'vuex';
@@ -38,32 +37,37 @@ export default defineComponent({
     const isAuthenticatedGetter = computed<boolean>(
       () => store.getters.isAuthenticated
     );
-    let isLoggedIn = ref(isAuthenticatedGetter.value);
 
     const menuItems = reactive([
       {
         label: 'Home',
         icon: 'pi pi-home',
         to: '/',
-        visible: isLoggedIn.value
+        visible: isAuthenticatedGetter.value
+      },
+      {
+        label: 'Menu',
+        icon: 'pi pi-list',
+        to: '/menu',
+        visible: isAuthenticatedGetter.value
       },
       {
         label: 'Log out',
         icon: 'pi pi-sign-out',
         command: logOut,
-        visible: isLoggedIn.value
+        visible: isAuthenticatedGetter.value
       },
       {
         label: 'Log in',
         icon: 'pi pi-sign-in',
         to: '/login',
-        visible: !isLoggedIn.value
+        visible: !isAuthenticatedGetter.value
       },
       {
         label: 'Register',
         icon: 'pi pi-user-plus',
         to: '/register',
-        visible: !isLoggedIn.value
+        visible: !isAuthenticatedGetter.value
       }
     ]);
 
@@ -80,13 +84,12 @@ export default defineComponent({
 
     onUnmounted(() => store.commit('setRefreshTimeout', null));
 
-    watch(isAuthenticatedGetter, (newValue) => {
-      isLoggedIn.value = newValue;
+    watch(isAuthenticatedGetter, () =>
       menuItems.map((item) => {
         item.visible = !item.visible;
         return item;
-      });
-    });
+      })
+    );
 
     function logOut() {
       clearTimeout(refreshTimeoutId.value as number);
