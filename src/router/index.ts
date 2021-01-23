@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
 import Home from '../views/Home.vue';
 import AuthModuleState from '@/interfaces/auth-module-state';
+import store from '@/store';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -20,6 +21,17 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/auth/LogIn.vue')
   },
   {
+    path: '/menu',
+    component: () => import('../views/menu/Index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'ShowMenu',
+        component: () => import('../views/menu/Show.vue')
+      }
+    ]
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
@@ -36,9 +48,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const state: AuthModuleState = JSON.parse(
-    localStorage.getItem('vuex') as string
-  ).auth;
+  const state = store.state.auth as AuthModuleState;
   const isAuthenticated = !!state.accessToken && !!state.currentUser;
 
   if (!['LogIn', 'Register'].includes(to.name as string) && !isAuthenticated) {
