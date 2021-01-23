@@ -1,5 +1,5 @@
 import { ActionContext } from 'vuex';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 import User from '@/interfaces/user';
 import AuthModuleState from '@/interfaces/auth-module-state';
