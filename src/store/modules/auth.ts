@@ -40,7 +40,7 @@ const actions = {
       const currentUser = res.data;
 
       commit('saveCredentials', { accessToken, currentUser });
-      await dispatch('silentRefresh', { timeout: FIFTEEN_MINUTES });
+      await dispatch('silentRefresh', FIFTEEN_MINUTES);
     } catch (error) {
       const message = determineErrorMessage(error);
 
@@ -57,7 +57,7 @@ const actions = {
       const currentUser = res.data;
 
       commit('saveCredentials', { accessToken, currentUser });
-      await dispatch('silentRefresh', { timeout: FIFTEEN_MINUTES });
+      await dispatch('silentRefresh', FIFTEEN_MINUTES);
     } catch (error) {
       const message = determineErrorMessage(error);
 
@@ -66,7 +66,7 @@ const actions = {
   },
   silentRefresh(
     { commit, dispatch }: ActionContext<AuthModuleState, RootState>,
-    { timeout }: { timeout: number }
+    timeout: number
   ) {
     return new Promise<number>((resolve, reject) => {
       const silentRefreshTimeout = setTimeout(() => {
@@ -77,7 +77,7 @@ const actions = {
             const currentUser = res.data;
 
             commit('saveCredentials', { accessToken, currentUser });
-            dispatch('silentRefresh', { timeout: FIFTEEN_MINUTES });
+            dispatch('silentRefresh', FIFTEEN_MINUTES);
           })
           .catch((error) => {
             const message = determineErrorMessage(error);

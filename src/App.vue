@@ -78,7 +78,7 @@ export default defineComponent({
 
       if (nextRefreshTimestamp) {
         const timeout = nextRefreshTimestamp - new Date().getTime();
-        store.dispatch('silentRefresh', { timeout });
+        store.dispatch('silentRefresh', timeout);
       }
     });
 
@@ -115,6 +115,7 @@ body {
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
+  margin-bottom: 1.75rem;
 }
 @media (min-width: 768px) {
   .container {
@@ -130,5 +131,19 @@ body {
   .container {
     width: 1170px;
   }
+}
+
+.p-field-radiobutton > label {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+.p-button[type='submit'] {
+  width: unset;
+  margin-left: 0.5rem;
+}
+
+.radio-label {
+  margin-left: 0.5rem;
 }
 </style>
