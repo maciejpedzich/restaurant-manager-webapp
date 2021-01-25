@@ -17,7 +17,7 @@
       <label for="password">Password</label>
       <Password id="password" :feedback="false" v-model="user.password" />
     </div>
-    <p id="permissions-label">Permissions</p>
+    <p class="radio-label">Permissions</p>
     <div class="p-field-radiobutton p-col-12">
       <label for="permissions-customer">
         <strong>Customer</strong>
@@ -51,7 +51,7 @@
         v-model="user.permissions"
       />
     </div>
-    <Button type="submit" class="p-mt-3" id="confirm" label="Confirm" />
+    <Button type="submit" class="p-mt-3" label="Confirm" />
   </form>
 </template>
 
@@ -114,19 +114,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-.p-field-radiobutton > label {
-  margin-left: 0;
-  margin-right: 0.5rem;
-}
-
-#permissions-label {
-  margin-left: 0.5rem;
-}
-
-#confirm {
-  width: unset;
-  margin-left: 0.5rem;
-}
-</style>
