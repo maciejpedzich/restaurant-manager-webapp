@@ -6,6 +6,7 @@
       v-if="isAuthenticated && currentUser.permissions === 'Owner'"
       label="Add product"
       icon="pi pi-plus"
+      @click="router.push('/menu/add')"
     />
     <div v-if="products.length > 0">
       <code>{{ products }}</code>
@@ -28,6 +29,7 @@ import { useToast } from 'primevue/usetoast';
 import Product from '../../interfaces/product';
 import determineErrorMessage from '../../utils/error-message';
 import User from '@/interfaces/user';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'ShowMenu',
@@ -37,6 +39,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const router = useRouter();
     const toast = useToast();
 
     const currentUser = computed<User>(() => store.getters.currentUser);
@@ -71,6 +74,7 @@ export default defineComponent({
     });
 
     return {
+      router,
       isAuthenticated,
       currentUser,
       isLoading,
