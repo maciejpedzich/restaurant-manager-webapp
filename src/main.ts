@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
+import ConfirmationService from 'primevue/confirmationservice';
 import 'primevue/resources/primevue.min.css';
 import 'primeflex/primeflex.css';
 import 'primevue/resources/themes/saga-green/theme.css';
@@ -21,4 +22,5 @@ app
   .use(router)
   .use(PrimeVue)
   .use(ToastService)
+  .use(ConfirmationService)
   .mount('#app');

@@ -1,6 +1,7 @@
 <template>
   <Menubar :model="menuItems" />
   <Toast position="top-right" />
+  <ConfirmDialog></ConfirmDialog>
   <div class="container">
     <router-view />
   </div>
@@ -20,12 +21,14 @@ import { useRouter } from 'vue-router';
 
 import Menubar from 'primevue/menubar';
 import Toast from 'primevue/toast';
+import ConfirmDialog from 'primevue/confirmdialog';
 
 export default defineComponent({
   name: 'App',
   components: {
     Menubar,
-    Toast
+    Toast,
+    ConfirmDialog
   },
   setup() {
     const store = useStore();
