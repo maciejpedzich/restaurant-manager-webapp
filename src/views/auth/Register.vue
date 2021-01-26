@@ -96,8 +96,8 @@ export default defineComponent({
         toast.add({
           severity: 'success',
           life: 3000,
-          summary: 'Hooray!',
-          detail: "You've been registered successfully"
+          summary: 'Success',
+          detail: 'You have been registered'
         });
         router.push('/');
       } catch (error) {

@@ -137,8 +137,8 @@ export default defineComponent({
         toast.add({
           severity: 'success',
           life: 3000,
-          summary: 'Hooray!',
-          detail: 'Prodcut added sucessfully'
+          summary: 'Success',
+          detail: 'Prodcut has been added'
         });
         router.push('/menu');
       } catch (error) {
@@ -170,8 +170,8 @@ export default defineComponent({
       toast.add({
         severity: 'success',
         life: 3000,
-        summary: 'Hooray!',
-        detail: 'Image uploaded successfully'
+        summary: 'Success',
+        detail: 'Image has been uploaded'
       });
     }
 
