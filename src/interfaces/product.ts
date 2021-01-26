@@ -1,6 +1,7 @@
 export default interface Product {
+  id?: string;
   name: string;
-  price: number;
+  price: string | number;
   imageUrl: string;
   category: string;
   availability: string;
