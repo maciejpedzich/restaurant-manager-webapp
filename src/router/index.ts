@@ -33,6 +33,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'add',
         name: 'AddProduct',
         component: () => import('../views/menu/Add.vue')
+      },
+      {
+        path: ':productId/update',
+        name: 'UpdateProduct',
+        component: () => import('../views/menu/Update.vue')
       }
     ]
   },
