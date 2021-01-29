@@ -1,5 +1,9 @@
 <template>
-  <Menubar :model="menuItems" />
+  <Menubar :model="menuItems">
+    <template #start>
+      <strong class="p-mx-lg-5 p-mx-sm-1">Restaurant</strong>
+    </template>
+  </Menubar>
   <Toast position="top-right" />
   <ConfirmDialog></ConfirmDialog>
   <div class="container">
@@ -52,6 +56,12 @@ export default defineComponent({
         label: 'Menu',
         icon: 'pi pi-list',
         to: '/menu',
+        visible: isAuthenticatedGetter.value
+      },
+      {
+        label: 'Order',
+        icon: 'pi pi-shopping-cart',
+        to: '/order',
         visible: isAuthenticatedGetter.value
       },
       {
@@ -116,9 +126,7 @@ body {
 .container {
   padding-right: 15px;
   padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
-  margin-bottom: 1.75rem;
+  margin: 5.5rem auto 1.75rem auto;
 }
 @media (min-width: 768px) {
   .container {
@@ -134,6 +142,16 @@ body {
   .container {
     width: 1170px;
   }
+}
+
+.p-menubar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+a.p-menubar-button {
+  margin-left: auto;
 }
 
 .p-field-radiobutton > label {
