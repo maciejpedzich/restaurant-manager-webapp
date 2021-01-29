@@ -1,7 +1,5 @@
 <template>
-  <div class="p-d-flex">
-    <h1>Menu</h1>
-  </div>
+  <h1>Menu</h1>
   <ProgressSpinner v-if="isLoading" />
   <div v-else>
     <Button
@@ -29,7 +27,20 @@
               <template #subtitle>
                 <span>${{ product.price }}</span>
               </template>
+              <template #content>
+                <Tag
+                  :value="product.availability"
+                  :severity="availabilityMap[product.availability]"
+                />
+              </template>
               <template #footer>
+                <Button
+                  v-if="isAuthenticated && currentUser.permissions !== 'Owner'"
+                  :disabled="product.availability === 'Out of stock'"
+                  icon="pi pi-plus"
+                  label="Add to order"
+                  @click="addProductToOrder(product)"
+                />
                 <Button
                   v-if="isOwner"
                   icon="pi pi-pencil"
@@ -57,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
@@ -67,6 +78,7 @@ import { useConfirm } from 'primevue/useconfirm';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import Card from 'primevue/card';
+import Tag from 'primevue/tag';
 
 import StringMap from '@/interfaces/string-map';
 import User from '@/interfaces/user';
@@ -78,7 +90,8 @@ export default defineComponent({
   components: {
     Button,
     ProgressSpinner,
-    Card
+    Card,
+    Tag
   },
   setup() {
     const store = useStore();
@@ -96,6 +109,11 @@ export default defineComponent({
 
     const isLoading = ref<boolean>(true);
     const categoryMap = ref<StringMap<Product[]> | null>(null);
+    const availabilityMap = reactive<StringMap<string>>({
+      'In stock': 'success',
+      'Low stock': 'warning',
+      'Out of stock': 'danger'
+    });
 
     onMounted(async () => {
       try {
@@ -160,6 +178,23 @@ export default defineComponent({
       });
     }
 
+    function addProductToOrder(product: Product) {
+      const { name, price } = product;
+      const quantity = 1;
+
+      store.commit('ADD_PRODUCT', {
+        name,
+        cost: parseFloat(price as string),
+        quantity
+      });
+      toast.add({
+        severity: 'success',
+        life: 3000,
+        summary: 'Success',
+        detail: `${name} has been added to your order`
+      });
+    }
+
     return {
       router,
       isAuthenticated,
@@ -167,7 +202,9 @@ export default defineComponent({
       isOwner,
       isLoading,
       categoryMap,
-      confirmDeleteProduct
+      availabilityMap,
+      confirmDeleteProduct,
+      addProductToOrder
     };
   }
 });
