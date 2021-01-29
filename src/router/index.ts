@@ -42,6 +42,17 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: '/order',
+    component: () => import('../views/order/Index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'ShowOrder',
+        component: () => import('../views/order/ShowCurrent.vue')
+      }
+    ]
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
