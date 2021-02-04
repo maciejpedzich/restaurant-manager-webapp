@@ -59,7 +59,7 @@ export default defineComponent({
         visible: isAuthenticatedGetter.value
       },
       {
-        label: 'Order',
+        label: 'Your order',
         icon: 'pi pi-shopping-cart',
         to: '/order',
         visible: isAuthenticatedGetter.value

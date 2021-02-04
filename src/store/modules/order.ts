@@ -1,7 +1,7 @@
 import CartModuleState from '@/interfaces/cart-module-state';
 import OrderProduct from '@/interfaces/order-product';
 
-const state = {
+const state: CartModuleState = {
   products: []
 };
 
@@ -31,10 +31,7 @@ const mutations = {
 
     if (exisitingProduct) {
       const productIndex = state.products.indexOf(exisitingProduct);
-
-      exisitingProduct.quantity - 1 > 0
-        ? state.products[productIndex].quantity--
-        : state.products.splice(productIndex, 1);
+      state.products.splice(productIndex, 1);
     }
   },
   CLEAR_PRODUCTS(state: CartModuleState) {

@@ -187,6 +187,7 @@ export default defineComponent({
         cost: parseFloat(price as string),
         quantity
       });
+
       toast.add({
         severity: 'success',
         life: 3000,
