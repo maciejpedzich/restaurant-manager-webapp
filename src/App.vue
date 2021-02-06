@@ -26,6 +26,7 @@ import { useRouter } from 'vue-router';
 import Menubar from 'primevue/menubar';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
+import User from './interfaces/models/user';
 
 export default defineComponent({
   name: 'App',
@@ -44,6 +45,7 @@ export default defineComponent({
     const isAuthenticatedGetter = computed<boolean>(
       () => store.getters.isAuthenticated
     );
+    const currentUser = computed<User | null>(() => store.getters.currentUser);
 
     const menuItems = reactive([
       {
@@ -59,9 +61,17 @@ export default defineComponent({
         visible: isAuthenticatedGetter.value
       },
       {
+        label: 'Orders',
+        icon: 'pi pi-question-circle',
+        to: '/orders',
+        visible:
+          isAuthenticatedGetter.value &&
+          currentUser.value?.permissions === 'Owner'
+      },
+      {
         label: 'Your order',
         icon: 'pi pi-shopping-cart',
-        to: '/order',
+        to: '/orders/summary',
         visible: isAuthenticatedGetter.value
       },
       {
@@ -97,9 +107,14 @@ export default defineComponent({
 
     onUnmounted(() => store.commit('setRefreshTimeout', null));
 
-    watch(isAuthenticatedGetter, () =>
+    watch(isAuthenticatedGetter, (newValue) =>
       menuItems.map((item) => {
-        item.visible = !item.visible;
+        const requiresElevatedPerms = ['Orders'];
+
+        item.visible = requiresElevatedPerms.includes(item.label)
+          ? newValue && currentUser.value?.permissions === 'Owner'
+          : !item.visible;
+
         return item;
       })
     );
