@@ -1,4 +1,4 @@
-import CartModuleState from '@/interfaces/cart-module-state';
+import CartModuleState from '@/interfaces/states/cart-module';
 import OrderProduct from '@/interfaces/order-product';
 
 const state: CartModuleState = {

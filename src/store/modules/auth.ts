@@ -1,9 +1,9 @@
 import { ActionContext } from 'vuex';
 import axios from 'axios';
 
-import User from '@/interfaces/user';
-import AuthModuleState from '@/interfaces/auth-module-state';
-import RootState from '@/interfaces/root-state';
+import User from '@/interfaces/models/user';
+import AuthModuleState from '@/interfaces/states/auth-module';
+import RootState from '@/interfaces/states/root';
 import determineErrorMessage from '@/utils/error-message';
 
 interface SaveCredentialsPayload {

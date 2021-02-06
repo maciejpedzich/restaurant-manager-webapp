@@ -1,4 +1,4 @@
-import User from '@/interfaces/user';
+import User from '@/interfaces/models/user';
 
 export default interface AuthModuleState {
   accessToken: string | null;

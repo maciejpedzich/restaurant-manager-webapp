@@ -1,5 +1,6 @@
-export default interface Product {
-  id?: string;
+import BaseModel from './base';
+
+export default interface Product extends BaseModel {
   name: string;
   price: string | number;
   imageUrl: string;
