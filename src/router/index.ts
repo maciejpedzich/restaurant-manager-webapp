@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
 import Home from '../views/Home.vue';
-import AuthModuleState from '@/interfaces/auth-module-state';
+import AuthModuleState from '@/interfaces/states/auth-module';
 import store from '@/store';
 
 const routes: Array<RouteRecordRaw> = [
@@ -42,24 +42,25 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
-    path: '/order',
-    component: () => import('../views/order/Index.vue'),
+    path: '/orders',
+    component: () => import('../views/orders/Index.vue'),
     children: [
       {
         path: '',
-        name: 'ShowOrder',
-        component: () => import('../views/order/ShowCurrent.vue')
+        name: 'ShowOrders',
+        component: () => import('../views/orders/ShowTable.vue')
+      },
+      {
+        path: 'summary',
+        name: 'CurrentOrderSummary',
+        component: () => import('../views/orders/CurrentSummary.vue')
       }
     ]
   },
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import('../views/About.vue')
   }
 ];
 
