@@ -61,7 +61,7 @@ import OrderProduct from '@/interfaces/order-product';
 import determineErrorMessage from '@/utils/error-message';
 
 export default defineComponent({
-  name: 'ShowCurrentOrder',
+  name: 'CurrentOrderSummary',
   components: {
     InputNumber,
     Divider,
@@ -81,13 +81,15 @@ export default defineComponent({
 
     async function submitOrder() {
       try {
-        await axios.post('/api/orders', {
+        const res = await axios.post('/api/orders', {
           content: products.value,
           cost: totalPrice.value
         });
+        const order = res.data;
 
         store.commit('CLEAR_PRODUCTS');
-        router.push('/');
+        router.push(`/orders/${order.id}`);
+
         toast.add({
           severity: 'success',
           life: 3000,
