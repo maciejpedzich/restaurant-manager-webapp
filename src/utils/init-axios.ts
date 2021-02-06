@@ -1,5 +1,5 @@
-import AuthModuleState from '@/interfaces/auth-module-state';
-import RootState from '@/interfaces/root-state';
+import AuthModuleState from '@/interfaces/states/auth-module';
+import RootState from '@/interfaces/states/root';
 import axios from 'axios';
 import store from '../store';
 
