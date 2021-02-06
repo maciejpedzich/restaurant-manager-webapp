@@ -66,7 +66,7 @@ import Password from 'primevue/password';
 import RadioButton from 'primevue/radiobutton';
 import Button from 'primevue/button';
 
-import User from '../../interfaces/user';
+import User from '../../interfaces/models/user';
 
 export default defineComponent({
   name: 'Register',

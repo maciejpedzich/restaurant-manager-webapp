@@ -81,8 +81,8 @@ import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 
 import StringMap from '@/interfaces/string-map';
-import User from '@/interfaces/user';
-import Product from '@/interfaces/product';
+import User from '@/interfaces/models/user';
+import Product from '@/interfaces/models/product';
 import determineErrorMessage from '../../utils/error-message';
 
 export default defineComponent({

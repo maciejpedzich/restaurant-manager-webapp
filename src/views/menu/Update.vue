@@ -81,7 +81,7 @@ import InputNumber from 'primevue/inputnumber';
 import RadioButton from 'primevue/radiobutton';
 import Button from 'primevue/button';
 
-import Product from '@/interfaces/product';
+import Product from '@/interfaces/models/product';
 import determineErrorMessage from '@/utils/error-message';
 
 export default defineComponent({

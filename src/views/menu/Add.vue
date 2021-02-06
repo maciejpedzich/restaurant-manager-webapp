@@ -97,7 +97,7 @@ import FileUpload from 'primevue/fileupload';
 import RadioButton from 'primevue/radiobutton';
 import Button from 'primevue/button';
 
-import Product from '@/interfaces/product';
+import Product from '@/interfaces/models/product';
 import determineErrorMessage from '@/utils/error-message';
 
 interface FileUploadEvent {
