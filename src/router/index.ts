@@ -54,6 +54,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'summary',
         name: 'CurrentOrderSummary',
         component: () => import('../views/orders/CurrentSummary.vue')
+      },
+      {
+        path: ':orderId',
+        name: 'ShowOrder',
+        component: () => import('../views/orders/ShowWithId.vue')
       }
     ]
   },

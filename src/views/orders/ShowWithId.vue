@@ -1,4 +1,31 @@
-<template> </template>
+<template>
+  <ProgressSpinner v-if="isLoading" />
+  <div v-else>
+    <h1>Order (ID: {{ order.id }})</h1>
+    <h3 class="p-text-light">
+      Last updated: {{ dateFormat(order.dateUpdated, 'dd.mm.yyyy (HH:MM)') }}
+    </h3>
+    <Timeline :value="events" layout="horizontal">
+      <template #content="slotProps">
+        {{ slotProps.item }}
+      </template>
+      <template #marker="slotProps">
+        <div
+          :class="{
+            'p-timeline-event-marker': true,
+            'current-status': order.status === slotProps.item
+          }"
+        ></div>
+      </template>
+    </Timeline>
+    <h2>Content:</h2>
+    <ul>
+      <li v-for="product in order.content" :key="product.name">
+        {{ product.name }} x{{ product.quantity }}
+      </li>
+    </ul>
+  </div>
+</template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
@@ -6,15 +33,18 @@ import { useRoute } from 'vue-router';
 import axios from 'axios';
 
 import { useToast } from 'primevue/usetoast';
+import Timeline from 'primevue/timeline';
 import ProgressSpinner from 'primevue/progressspinner';
 
-import Order from '@/interfaces/order';
+import dateFormat from 'dateformat';
+import Order from '@/interfaces/models/order';
 import determineErrorMessage from '@/utils/error-message';
 
 export default defineComponent({
   name: 'ShowOrderWithId',
   components: {
-    ProgressSpinner
+    ProgressSpinner,
+    Timeline
   },
   setup() {
     const route = useRoute();
@@ -22,6 +52,7 @@ export default defineComponent({
 
     const isLoading = ref<boolean>(true);
     const order = ref<Order | null>(null);
+    const events = ['Received', 'Preparing', 'Packing', 'Ready'];
 
     onMounted(async () => {
       try {
@@ -41,7 +72,13 @@ export default defineComponent({
       }
     });
 
-    return { isLoading, order };
+    return { dateFormat, isLoading, order, events };
   }
 });
 </script>
+
+<style scoped>
+.current-status {
+  background-color: #4caf50;
+}
+</style>
