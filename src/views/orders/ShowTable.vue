@@ -3,13 +3,13 @@
   <ProgressSpinner v-if="isLoading" />
   <div v-else>
     <DataTable class="p-datatable-striped" :value="orders">
-      <Column field="id" header="ID"></Column>
+      <Column field="id" header="ID" />
       <Column field="dateCreated" header="Date created">
         <template #body="slotProps">
-          {{ formatDate(slotProps.data.dateCreated) }}
+          {{ dateFormat(slotProps.data.dateCreated, 'dd.mm.yyyy at hh:MM') }}
         </template>
       </Column>
-      <Column field="status" header="Status"></Column>
+      <Column field="status" header="Status" />
       <Column>
         <template #body="slotProps">
           <Button
@@ -36,6 +36,7 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 
+import dateFormat from 'dateformat';
 import determineErrorMessage from '@/utils/error-message';
 
 export default defineComponent({
@@ -53,10 +54,6 @@ export default defineComponent({
 
     const isLoading = ref<boolean>(true);
     const orders = ref<[] | null>(null);
-
-    function formatDate(dateStr: string) {
-      return new Date(dateStr).toISOString().substr(0, 10);
-    }
 
     onMounted(async () => {
       try {
@@ -77,7 +74,7 @@ export default defineComponent({
       }
     });
 
-    return { router, formatDate, isLoading, orders };
+    return { router, dateFormat, isLoading, orders };
   }
 });
 </script>
