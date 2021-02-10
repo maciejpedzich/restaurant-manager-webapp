@@ -3,7 +3,7 @@
   <div v-else>
     <h1>Order (ID: {{ order.id }})</h1>
     <h3 class="p-text-light">
-      Last updated: {{ dateFormat(order.dateUpdated, 'dd.mm.yyyy (HH:MM)') }}
+      Date ordered: {{ dateFormat(order.dateCreated, 'dd.mm.yyyy (HH:MM)') }}
     </h3>
     <Timeline :value="events" layout="horizontal">
       <template #content="slotProps">
@@ -31,12 +31,15 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import dateFormat from 'dateformat';
 
 import { useToast } from 'primevue/usetoast';
 import Timeline from 'primevue/timeline';
 import ProgressSpinner from 'primevue/progressspinner';
 
-import dateFormat from 'dateformat';
+import socketConnectMixin from '@/mixins/socket-connect';
+import socket from '@/socket.io';
+
 import Order from '@/interfaces/models/order';
 import determineErrorMessage from '@/utils/error-message';
 
@@ -46,6 +49,7 @@ export default defineComponent({
     ProgressSpinner,
     Timeline
   },
+  mixins: [socketConnectMixin],
   setup() {
     const route = useRoute();
     const toast = useToast();
@@ -55,6 +59,13 @@ export default defineComponent({
     const events = ['Received', 'Preparing', 'Packing', 'Ready'];
 
     onMounted(async () => {
+      socket.emit('join room', `order ${route.params.orderId}`);
+
+      socket.on(
+        'order updated',
+        (status: string) => ((order.value as Order).status = status)
+      );
+
       try {
         const res = await axios.get(`/api/orders/${route.params.orderId}`);
 
